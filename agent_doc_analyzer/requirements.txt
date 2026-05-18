@@ -1,0 +1,3 @@
+# Dependencies will be added here
+requests
+pytest
