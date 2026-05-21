@@ -68,5 +68,3 @@ venv.bak/
 .DS_Store
 
 # User-specified ignores
-journal.md
-agent_doc_analyzer/journal.md
