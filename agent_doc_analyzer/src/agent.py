@@ -34,8 +34,8 @@ class AnalysisAgent:
                 if "calculator" not in self.tools:
                     return {"status": "error", "message": "Calculator tool not available."}
                 
-                # Extract math expression using a basic regex
-                match = re.search(r'([\d\s\+\-\*\/\(\)\.]+)', user_input)
+                # Extract math expression using a more specific regex
+                match = re.search(r'([\d\(\)][\d\s\+\-\*\/\(\)\.]+[\d\(\)])', user_input)
                 if match:
                     expression = match.group(1).strip()
                     # Fallback check to ensure it actually contains digits
@@ -49,8 +49,8 @@ class AnalysisAgent:
                 if "currency_fetcher" not in self.tools:
                     return {"status": "error", "message": "Currency tool not available."}
                 
-                # Extract potential currency codes (3 uppercase letters)
-                currencies = re.findall(r'\b[A-Z]{3}\b', user_input.upper())
+                # Extract potential currency codes (USD, EUR, GBP, JPY)
+                currencies = re.findall(r'\b(USD|EUR|GBP|JPY)\b', user_input.upper())
                 if len(currencies) >= 2:
                     return self.tools["currency_fetcher"].execute(currencies[0], currencies[1])
                 else:
