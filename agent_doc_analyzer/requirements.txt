@@ -1,3 +1,2 @@
-# Dependencies will be added here
-requests
-pytest
+requests==2.31.0
+pytest==8.1.1

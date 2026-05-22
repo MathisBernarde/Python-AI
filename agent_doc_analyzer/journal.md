@@ -56,23 +56,18 @@ Since input data can be highly unstructured or semi-structured (e.g., irregular 
 ## Final Submission – 22.05
 
 **Final System Description and Goal**
-The completed `agent_doc_analyzer` acts as a resilient AI-supported software agent capable of parsing raw text, orchestrating external tools securely, and returning structured outputs. Its ultimate goal of computing values and unifying currencies into a base Euro (EUR) has been fully achieved through the modular ToolRegistry architecture.
+The `agent_doc_analyzer` acts as a resilient AI-supported software agent capable of parsing raw text, safely orchestrating external computational and API tools, and returning structured dictionaries. Its goal of deriving deterministic financial metrics and normalizing currencies has been fully achieved through a modular architecture.
 
-**Final Explanation of Programming Concepts and Usage**
-- **OOP & Interfaces**: Enabled easy extension of toolkits (e.g., adding `CurrencyFetcherTool`) without modifying the core agent logic.
-- **Dependency Injection**: Allowed injecting tools dynamically during the `AnalysisAgent` initialization, making the unit tests straightforward as tools could be mocked.
-- **Regex Parsing & AST Safe Eval**: Ensured that extracting parameters from raw strings was robust and executing mathematical sequences (`ast.parse`) entirely circumvented the severe security risks associated with `eval()`.
+**Programming Concepts and Usage Summary**
+- **Object-Oriented Interfaces:** Leveraged abstract base classes (`BaseTool`) to guarantee all tools execute identically through the main agent loop.
+- **Dependency Injection:** The `AnalysisAgent` receives its toolset via its constructor, keeping the core reasoning loop decoupled from concrete tool implementations and making isolated testing straightforward.
+- **Structural Pattern Matching / RegEx / AST:** Ensured that parameter extraction from unstructured strings was robust (RegEx) and executing mathematical sequences was completely secure via Abstract Syntax Trees (`ast.parse`), circumventing `eval()`.
 
-**Final Description of Tools and Role in the System**
-The tool suite functions as the "acting" layer of the ReAct pattern:
-- **Calculator Tool**: Processes strings of mathematics, serving as an exact deterministic fallback for the LLM's inherently flawed internal arithmetic.
-- **Currency Fetcher Tool**: Supplies exact conversion factors required by the agent to convert values from distinct locales into the standard EUR baseline.
+**Tool Execution Metrics & Validation Outcomes**
+The integrated test suite (`unittest`) executes 8 distinct scenarios spanning core functionality, input transformations, and failure bounds. Validation confirmed 100% test passage:
+- The `CalculatorTool` correctly evaluates precedence while halting maliciously formatted strings (e.g., throwing safe errors instead of executing arbitrary code).
+- The `CurrencyFetcherTool` manages invalid or unsupported currency abbreviations through safe fallback messages.
+- The Agent loop correctly identifies keywords mapped to tool schemas and gracefully bounces invalid user commands.
 
-**Final Testing Results and Conclusions**
-All 8 test scenarios defined using the `unittest` framework (testing valid logic, corrupt data handling, missing parameters, and unsupported boundaries) passed successfully. The test suite guarantees that both individual components (Tools) and the integrated pipeline (Agent) behave predictably, handle invalid inputs gracefully via error dictionaries instead of crashes, and fulfill the core requirements.
-
-**Final Deployment Preparation Description**
-The repository is completely clean and structured. Required dependencies are documented in `requirements.txt`. Execution configurations reside in `config/settings.py`. To deploy the app locally, a user simply clones the repository, installs the dependencies (`pip install -r requirements.txt`), and executes the entry point (`python main.py`).
-
-**Deployment Strategy Proposal**
-While currently built as a Command-Line Tool for local testing and controlled validation, the most viable long-term deployment strategy for this system would be an **API-based microservice architecture** (e.g., wrapping `process_command` in a FastAPI endpoint). This approach allows the agent to ingest JSON payloads continuously, horizontally scale depending on concurrent analysis requests, and interface effortlessly with broader enterprise applications (like ERP dashboards).
+**Closing Deployment Conclusions & Strategy**
+The project has successfully reached Phase 1 Deployment as an interactive Python Command-Line Interface. The CLI acts as a staging ground proving the viability of the data ingestion pipelines. The recommended deployment strategy for production is to transition the agent into a containerized microservice (Docker/FastAPI). Containerization isolates the text parsing logic securely away from the host OS and exposes the agent as a scalable API endpoint capable of servicing heavy enterprise documentation workloads.
